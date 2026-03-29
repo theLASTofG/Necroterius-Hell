@@ -42,7 +42,7 @@ import {
   Character,
   CharacterStats,
 } from './types';
-import { computeCharacterStats, calculateDamageAfterDefense } from './stats';
+import { computeCharacterStats, calculateDamageAfterDefense, calculateItemPower } from './stats';
 import { generateMobDrops } from './itemGenerator';
 import { generateWaveMobs, shouldMerchantAppear, generateMerchantName, generateMob, getMobTypeForWave } from './mobGenerator';
 import { generateMerchantItems } from './itemGenerator';
@@ -245,12 +245,15 @@ function resolveMobAttack(
 /**
  * Cria o estado inicial de combate para uma nova wave.
  */
-export function createInitialCombatState(wave: number = 1): CombatState {
+export function createInitialCombatState(wave: number = 1, maxWaveReached: number = 1): CombatState {
   const mobs = generateWaveMobs(wave);
   return {
     isRunning: false,
     isPaused: false,
     wave,
+    maxWaveReached: Math.max(wave, maxWaveReached),
+    isFarmMode: false,
+    currentAreaId: 'area_1', // Padrão
     mobsInWave: mobs.length,
     mobsKilled: 0,
     currentMob: mobs[0] ?? null,
@@ -478,6 +481,29 @@ export function processCombatTick(
     // Adicionar drops ao inventário
     character.inventory.push(...droppedItems);
 
+    // Auto-equipar itens melhores se a configuração estiver ativa
+    if (state.settings.autoEquipBetter) {
+      for (const item of droppedItems) {
+        const equipped = character.equipment[item.slot];
+        if (!equipped || calculateItemPower(item) > calculateItemPower(equipped)) {
+          // Equipar o item (move o antigo para o inventário)
+          const itemIndex = character.inventory.findIndex(i => i.id === item.id);
+          if (itemIndex !== -1) {
+            if (equipped) {
+              // Já está no inventário por ser dropado, mas o equipado precisa ir para lá
+              // Na verdade, o drop já está no inventário, então só precisamos trocar
+              character.equipment[item.slot] = item;
+              character.inventory.splice(itemIndex, 1);
+              character.inventory.push(equipped);
+            } else {
+              character.equipment[item.slot] = item;
+              character.inventory.splice(itemIndex, 1);
+            }
+          }
+        }
+      }
+    }
+
     // Próximo mob ou próxima wave
     const nextMobIndex = combat.mobsKilled;
     const totalMobsInWave = combat.mobsInWave;
@@ -514,11 +540,15 @@ export function processCombatTick(
         state.showMerchant = true;
         state.gamePhase = 'merchant';
       } else {
-        // Avançar para próxima wave automaticamente
-        const nextWave = combat.wave + 1;
+        // Avançar para próxima wave ou repetir se estiver em modo farm
+        const nextWave = combat.isFarmMode ? combat.wave : combat.wave + 1;
         const nextWaveMobs = generateWaveMobs(nextWave);
+        const newMaxWave = Math.max(combat.maxWaveReached, nextWave);
+        
         state.combat = {
-          ...createInitialCombatState(nextWave),
+          ...createInitialCombatState(nextWave, newMaxWave),
+          isFarmMode: combat.isFarmMode,
+          currentAreaId: combat.currentAreaId,
           currentMob: nextWaveMobs[0],
           mobsInWave: nextWaveMobs.length,
           isRunning: true,

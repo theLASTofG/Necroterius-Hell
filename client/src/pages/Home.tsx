@@ -29,6 +29,8 @@ import CombatLog from '../components/game/CombatLog';
 import StatsPanel from '../components/game/StatsPanel';
 import GameHUD from '../components/game/GameHUD';
 import MerchantPanel from '../components/game/MerchantPanel';
+import { AreaNavigationPanel } from '../components/game/AreaNavigationPanel';
+import { DropRatesPanel } from '../components/game/DropRatesPanel';
 import { useGame } from '../contexts/GameContext';
 
 // ─── LAYOUT INTERNO (usa o contexto) ─────────────────────────
@@ -57,23 +59,27 @@ function GameLayout() {
       {/* ── Layout desktop ── */}
       <div className="hidden md:flex flex-1 overflow-hidden">
 
-        {/* Coluna esquerda: Equipamentos */}
+        {/* Coluna esquerda: Equipamentos e Navegação */}
         <div
-          className="flex-shrink-0 overflow-y-auto"
+          className="flex-shrink-0 overflow-y-auto flex flex-col gap-4 p-2"
           style={{
-            width: '200px',
+            width: '280px',
             borderRight: '1px solid #111827',
             background: '#030303',
           }}
         >
           <EquipmentPanel />
+          <AreaNavigationPanel />
         </div>
 
         {/* Centro: Arena de batalha */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Arena */}
-          <div className="flex-1 relative" style={{ minHeight: '350px' }}>
+          <div className="flex-1 relative overflow-y-auto" style={{ minHeight: '350px' }}>
             <BattleArena />
+            <div className="p-4">
+              <DropRatesPanel />
+            </div>
           </div>
 
           {/* Log de combate */}

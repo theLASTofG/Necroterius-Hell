@@ -119,7 +119,12 @@ type GameAction =
   | { type: 'TOGGLE_EQUIPMENT' }
   | { type: 'DISMISS_NOTIFICATION'; payload: string }
   | { type: 'ADD_NOTIFICATION'; payload: GameNotification }
-  | { type: 'CLOSE_MERCHANT' };
+  | { type: 'CLOSE_MERCHANT' }
+  | { type: 'SET_FARM_MODE'; payload: boolean }
+  | { type: 'GO_TO_WAVE'; payload: number }
+  | { type: 'SET_AREA'; payload: string }
+  | { type: 'TOGGLE_AUTO_EQUIP' }
+  | { type: 'SELL_LOW_RARITY'; payload: Rarity };
 
 // ─── REDUCER ──────────────────────────────────────────────────
 
@@ -209,15 +214,18 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'CLOSE_MERCHANT': {
-      const nextWave = state.combat.wave + 1;
+      const nextWave = state.combat.isFarmMode ? state.combat.wave : state.combat.wave + 1;
       const waveMobs = generateWaveMobs(nextWave);
+      const newMaxWave = Math.max(state.combat.maxWaveReached, nextWave);
       return {
         ...state,
         showMerchant: false,
         merchant: null,
         gamePhase: 'combat',
         combat: {
-          ...createInitialCombatState(nextWave),
+          ...createInitialCombatState(nextWave, newMaxWave),
+          isFarmMode: state.combat.isFarmMode,
+          currentAreaId: state.combat.currentAreaId,
           currentMob: waveMobs[0] ?? null,
           mobsInWave: waveMobs.length,
           isRunning: true,
@@ -225,6 +233,63 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           lastTickTime: Date.now(),
         },
       };
+    }
+
+    case 'SET_FARM_MODE': {
+      return {
+        ...state,
+        combat: { ...state.combat, isFarmMode: action.payload },
+      };
+    }
+
+    case 'GO_TO_WAVE': {
+      const wave = action.payload;
+      const waveMobs = generateWaveMobs(wave);
+      return {
+        ...state,
+        gamePhase: 'combat',
+        combat: {
+          ...createInitialCombatState(wave, state.combat.maxWaveReached),
+          currentMob: waveMobs[0],
+          mobsInWave: waveMobs.length,
+          isRunning: true,
+        },
+      };
+    }
+
+    case 'SET_AREA': {
+      return {
+        ...state,
+        combat: { ...state.combat, currentAreaId: action.payload },
+      };
+    }
+
+    case 'TOGGLE_AUTO_EQUIP': {
+      return {
+        ...state,
+        settings: { ...state.settings, autoEquipBetter: !state.settings.autoEquipBetter },
+      };
+    }
+
+    case 'SELL_LOW_RARITY': {
+      const newState = deepCloneGameState(state);
+      const threshold = RARITY_ORDER[action.payload];
+      
+      const toKeep: Item[] = [];
+      let goldGained = 0;
+      
+      for (const item of newState.character.inventory) {
+        if (RARITY_ORDER[item.rarity] <= threshold) {
+          goldGained += Math.floor(item.price * 0.2);
+        } else {
+          toKeep.push(item);
+        }
+      }
+      
+      newState.character.inventory = toKeep;
+      newState.character.gold += goldGained;
+      
+      return newState;
     }
 
     default:

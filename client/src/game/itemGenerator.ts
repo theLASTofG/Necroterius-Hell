@@ -72,6 +72,8 @@ export function rollRarity(itemFindBonus: number = 0): Rarity {
     rare:      RARITY_DROP_CHANCE.rare * bonusMultiplier,
     epic:      RARITY_DROP_CHANCE.epic * bonusMultiplier,
     legendary: RARITY_DROP_CHANCE.legendary * bonusMultiplier,
+    mythic:    RARITY_DROP_CHANCE.mythic * bonusMultiplier,
+    celestial: RARITY_DROP_CHANCE.celestial * bonusMultiplier,
   };
 
   const total = Object.values(chances).reduce((a, b) => a + b, 0);

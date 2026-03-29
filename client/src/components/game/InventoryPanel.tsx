@@ -21,6 +21,11 @@ import {
   Rarity,
 } from '../../game/types';
 import { getModifierLabel, calculateItemPower } from '../../game/stats';
+import { Button } from '../ui/button';
+import { Switch } from '../ui/switch';
+import { Label } from '../ui/label';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu';
+import { Trash2, Sparkles } from 'lucide-react';
 
 // Ordem de raridade para sort
 const RARITY_ORDER: Record<Rarity, number> = {
@@ -179,7 +184,7 @@ function ItemCard({ item, onEquip, onDiscard, isEquipped }: ItemCardProps) {
 // ─── COMPONENTE PRINCIPAL ─────────────────────────────────────
 
 export default function InventoryPanel() {
-  const { state, equipItem, discardItem } = useGame();
+  const { state, dispatch, equipItem, discardItem } = useGame();
   const { character } = state;
   const [filter, setFilter] = useState<Rarity | 'all'>('all');
 
@@ -216,9 +221,47 @@ export default function InventoryPanel() {
         >
           🎒 INVENTÁRIO ({character.inventory.length})
         </span>
-        <span className="text-xs font-mono" style={{ color: '#FBBF24' }}>
-          💰 {character.gold.toLocaleString()}
-        </span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 mr-2">
+            <Label htmlFor="auto-equip" className="text-[9px] text-slate-500 uppercase font-bold">Auto-Equip</Label>
+            <Switch 
+              id="auto-equip" 
+              checked={state.settings.autoEquipBetter} 
+              onCheckedChange={() => dispatch({ type: 'TOGGLE_AUTO_EQUIP' })}
+              className="scale-75"
+            />
+          </div>
+          <span className="text-xs font-mono" style={{ color: '#FBBF24' }}>
+            💰 {character.gold.toLocaleString()}
+          </span>
+        </div>
+      </div>
+
+      {/* Ações Rápidas */}
+      <div className="flex items-center justify-between px-2 py-1.5 bg-slate-900/30 border-bottom border-slate-800">
+        <div className="text-[9px] text-slate-500 uppercase font-bold flex items-center gap-1">
+          <Sparkles className="w-3 h-3 text-amber-500" />
+          Ações Rápidas
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="xs" variant="outline" className="h-6 text-[9px] border-red-900/50 text-red-400 hover:bg-red-900/20">
+              <Trash2 className="w-3 h-3 mr-1" />
+              VENDA AUTOMÁTICA
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-slate-900 border-slate-800 text-slate-300">
+            <DropdownMenuItem onClick={() => dispatch({ type: 'SELL_LOW_RARITY', payload: 'common' })} className="text-xs hover:bg-slate-800">
+              Vender todos COMUNS
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => dispatch({ type: 'SELL_LOW_RARITY', payload: 'uncommon' })} className="text-xs hover:bg-slate-800">
+              Vender até INCOMUNS
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => dispatch({ type: 'SELL_LOW_RARITY', payload: 'rare' })} className="text-xs hover:bg-slate-800">
+              Vender até RAROS
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Filtros de raridade */}

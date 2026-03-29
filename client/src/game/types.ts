@@ -334,10 +334,23 @@ export interface BleedEffect {
   source: 'player' | 'mob';
 }
 
+export interface Area {
+  id: string;
+  name: string;
+  minWave: number;
+  maxWave: number;
+  unlocked: boolean;
+  isBossArea: boolean;
+  description: string;
+}
+
 export interface CombatState {
   isRunning: boolean;
   isPaused: boolean;
   wave: number;
+  maxWaveReached: number; // Para controle de áreas desbloqueadas
+  isFarmMode: boolean;    // Se true, repete a wave atual ao invés de avançar
+  currentAreaId: string;  // ID da área atual
   mobsInWave: number;
   mobsKilled: number;
   currentMob: Mob | null;
