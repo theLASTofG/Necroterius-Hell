@@ -27,8 +27,11 @@ import {
   Rarity,
   EquipSlot,
   WeaponType,
+  ItemAffix,
   RARITY_POWER_MULT,
   RARITY_DROP_CHANCE,
+  AFFIX_CHANCES,
+  generateRandomAffix,
 } from './types';
 
 // ─── UTILITÁRIOS ALEATÓRIOS ──────────────────────────────────
@@ -376,12 +379,14 @@ export function generateItem(
     common: 1, uncommon: 2.5, rare: 6, epic: 15, legendary: 50,
   };
   const price = Math.floor(basePrice * rarityPriceMultipliers[finalRarity] * (0.8 + Math.random() * 0.4));
+  const affix = generateRandomAffix(finalRarity);
 
   return {
     id: nanoid(),
     name: generateItemName(slot, weaponType, finalRarity),
     slot,
     rarity: finalRarity,
+    affix,
     weaponType,
     level: waveLevel,
     baseStats,

@@ -120,22 +120,59 @@ export interface ItemModifier {
   isPercent: boolean;  // Se true, é percentual; se false, é flat
 }
 
+// ─── AFIXOS DE ITENS ────────────────────────────────────────
+export type ItemAffix = 'normal' | 'cursed' | 'blessed' | 'god_touch';
+
+export const AFFIX_LABELS: Record<ItemAffix, string> = {
+  normal:    'Normal',
+  cursed:    'Amaldiçoado',
+  blessed:   'Abençoado',
+  god_touch: 'Toque Divino',
+};
+
+export const AFFIX_COLORS: Record<ItemAffix, string> = {
+  normal:    '#9CA3AF',
+  cursed:    '#7C3AED',
+  blessed:   '#06B6D4',
+  god_touch: '#FBBF24',
+};
+
+export const AFFIX_CHANCES: Record<Rarity, Record<ItemAffix, number>> = {
+  common:    { normal: 85, cursed: 10, blessed: 5, god_touch: 0 },
+  uncommon:  { normal: 80, cursed: 10, blessed: 8, god_touch: 2 },
+  rare:      { normal: 70, cursed: 10, blessed: 15, god_touch: 5 },
+  epic:      { normal: 60, cursed: 10, blessed: 20, god_touch: 10 },
+  legendary: { normal: 40, cursed: 10, blessed: 30, god_touch: 20 },
+};
+
+export function generateRandomAffix(rarity: Rarity): ItemAffix {
+  const chances = AFFIX_CHANCES[rarity];
+  const roll = Math.random() * 100;
+  let cumulative = 0;
+  for (const [affix, chance] of Object.entries(chances)) {
+    cumulative += chance;
+    if (roll < cumulative) return affix as ItemAffix;
+  }
+  return 'normal';
+}
+
 // ─── ITEM ────────────────────────────────────────────────────
 export interface Item {
-  id: string;           // ID único (nanoid)
-  name: string;         // Nome do item
-  slot: EquipSlot;      // Slot que ocupa
-  rarity: Rarity;       // Raridade
-  weaponType?: WeaponType; // Tipo de arma (apenas para mainhand/offhand)
-  level: number;        // Nível do item (escala com wave)
-  baseStats: ItemModifier[];  // Stats base garantidos
-  bonusStats: ItemModifier[]; // Stats bônus aleatórios (modificadores)
-  icon: string;         // Emoji ou URL do ícone
-  description: string;  // Descrição de lore/flavor text
-  price: number;        // Preço em ouro (para mercante)
-  requiredLevel: number;// Nível mínimo do personagem para equipar
-  // Para itens lendários: pode ter requisito de outro item
-  requiredItem?: string; // ID do tipo de item necessário para usar
+  id: string;
+  name: string;
+  slot: EquipSlot;
+  rarity: Rarity;
+  affix: ItemAffix;
+  weaponType?: WeaponType;
+  level: number;
+  baseStats: ItemModifier[];
+  bonusStats: ItemModifier[];
+  icon: string;
+  imageUrl?: string;
+  description: string;
+  price: number;
+  requiredLevel: number;
+  requiredItem?: string;
 }
 
 // ─── STATS DO PERSONAGEM ─────────────────────────────────────
