@@ -120,6 +120,12 @@ function applyItemStats(stats: CharacterStats, item: Item): void {
   for (const mod of item.bonusStats) {
     applyModifier(stats, mod);
   }
+  // Aplicar modifiers do efeito único (se houver)
+  if (item.uniqueEffect) {
+    for (const mod of item.uniqueEffect.modifiers) {
+      applyModifier(stats, mod);
+    }
+  }
 }
 
 /**

@@ -93,6 +93,11 @@ function MerchantItemCard({ merchantItem, canAfford, onBuy }: MerchantItemCardPr
                   +{item.baseStats.length + item.bonusStats.length - 3} mais...
                 </div>
               )}
+              {item.uniqueEffect && (
+                <div className="text-xs font-mono font-bold" style={{ color: item.uniqueEffect.color, fontSize: '10px' }}>
+                  ★ {item.uniqueEffect.name}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -165,6 +170,22 @@ function MerchantItemCard({ merchantItem, canAfford, onBuy }: MerchantItemCardPr
                   <div key={i} style={{ color: rarityColor }}>{getModifierLabel(mod)}</div>
                 ))}
               </>
+            )}
+            {/* Efeito Único */}
+            {item.uniqueEffect && (
+              <div className="mt-2 p-2" style={{ background: `${item.uniqueEffect.color}10`, border: `1px solid ${item.uniqueEffect.color}40` }}>
+                <div className="font-bold text-xs mb-1" style={{ color: item.uniqueEffect.color }}>
+                  ★ {item.uniqueEffect.name}
+                </div>
+                <div className="text-xs italic mb-1" style={{ color: `${item.uniqueEffect.color}CC` }}>
+                  {item.uniqueEffect.description}
+                </div>
+                {item.uniqueEffect.modifiers.map((mod, i) => (
+                  <div key={i} style={{ color: item.uniqueEffect!.color, fontWeight: 'bold' }}>
+                    {getModifierLabel(mod)}
+                  </div>
+                ))}
+              </div>
             )}
             <div className="w-full h-px mt-2 mb-2" style={{ background: '#1F2937' }} />
             <div className="text-gray-600 italic">{item.description}</div>

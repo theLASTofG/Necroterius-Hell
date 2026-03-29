@@ -28,9 +28,12 @@ import {
   EquipSlot,
   WeaponType,
   ItemAffix,
+  UniqueEffect,
   RARITY_POWER_MULT,
   RARITY_DROP_CHANCE,
   AFFIX_CHANCES,
+  UNIQUE_EFFECTS,
+  UNIQUE_EFFECT_CHANCE,
   generateRandomAffix,
 } from './types';
 
@@ -383,9 +386,26 @@ export function generateItem(
   const price = Math.floor(basePrice * rarityPriceMultipliers[finalRarity] * (0.8 + Math.random() * 0.4));
   const affix = generateRandomAffix(finalRarity);
 
+  // Rolar efeito único (chance baseada na raridade)
+  const uniqueChance = UNIQUE_EFFECT_CHANCE[finalRarity];
+  let uniqueEffect: UniqueEffect | undefined;
+  if (uniqueChance > 0 && rollChance(uniqueChance)) {
+    uniqueEffect = randChoice(UNIQUE_EFFECTS);
+  }
+
+  // Nome especial para itens com efeito único
+  const itemName = uniqueEffect
+    ? `${uniqueEffect.name}` // O nome do efeito único se torna o nome do item
+    : generateItemName(slot, weaponType, finalRarity);
+
+  // Descrição especial para itens com efeito único
+  const description = uniqueEffect
+    ? uniqueEffect.description
+    : randChoice(FLAVOR_TEXTS);
+
   return {
     id: nanoid(),
-    name: generateItemName(slot, weaponType, finalRarity),
+    name: itemName,
     slot,
     rarity: finalRarity,
     affix,
@@ -393,9 +413,10 @@ export function generateItem(
     level: waveLevel,
     baseStats,
     bonusStats,
+    uniqueEffect,
     icon: getItemIcon(slot, weaponType),
-    description: randChoice(FLAVOR_TEXTS),
-    price,
+    description,
+    price: uniqueEffect ? Math.floor(price * 2.5) : price, // Itens únicos custam mais
     requiredLevel: Math.max(1, waveLevel - 2),
   };
 }

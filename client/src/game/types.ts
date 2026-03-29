@@ -166,6 +166,207 @@ export function generateRandomAffix(rarity: Rarity): ItemAffix {
   return 'normal';
 }
 
+// ─── EFEITOS ÚNICOS DE ITENS ────────────────────────────────
+// Efeitos especiais que podem aparecer em itens raros+
+// Esses efeitos são game-changers que resolvem a run
+export interface UniqueEffect {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  modifiers: ItemModifier[];
+}
+
+// Pool de efeitos únicos — cada um é poderoso o suficiente para mudar a run
+export const UNIQUE_EFFECTS: UniqueEffect[] = [
+  // Ofensivos
+  {
+    id: 'vampiric_blade',
+    name: 'Lâmina Vampírica',
+    description: 'Cada golpe drena a essência vital do inimigo.',
+    color: '#DC2626',
+    modifiers: [
+      { type: 'lifesteal', value: 18, isPercent: true },
+      { type: 'attack_damage_pct', value: 15, isPercent: true },
+    ],
+  },
+  {
+    id: 'berserker_fury',
+    name: 'Fúria do Berserker',
+    description: 'Atacar mais rápido que o olho pode acompanhar.',
+    color: '#EF4444',
+    modifiers: [
+      { type: 'attack_speed', value: 50, isPercent: true },
+      { type: 'double_attack_chance', value: 25, isPercent: true },
+      { type: 'crit_rate', value: 10, isPercent: true },
+    ],
+  },
+  {
+    id: 'executioner',
+    name: 'Golpe do Executor',
+    description: 'Críticos devastadores que destroem qualquer defesa.',
+    color: '#FBBF24',
+    modifiers: [
+      { type: 'crit_damage', value: 120, isPercent: true },
+      { type: 'crit_rate', value: 15, isPercent: true },
+    ],
+  },
+  {
+    id: 'triple_threat',
+    name: 'Ameaça Tripla',
+    description: 'As mãos se movem em blur — três golpes onde havia um.',
+    color: '#F97316',
+    modifiers: [
+      { type: 'triple_attack_chance', value: 30, isPercent: true },
+      { type: 'attack_speed', value: 20, isPercent: true },
+    ],
+  },
+  {
+    id: 'venomous_edge',
+    name: 'Fio Venenoso',
+    description: 'Cada corte injeta veneno puro nas veias do inimigo.',
+    color: '#22C55E',
+    modifiers: [
+      { type: 'bleed_chance', value: 40, isPercent: true },
+      { type: 'bleed_damage', value: 15, isPercent: false },
+      { type: 'bleed_duration', value: 3, isPercent: false },
+    ],
+  },
+  {
+    id: 'soul_reaper',
+    name: 'Ceifador de Almas',
+    description: 'Cada inimigo morto alimenta sua fome insaciável.',
+    color: '#7C3AED',
+    modifiers: [
+      { type: 'attack_damage_pct', value: 35, isPercent: true },
+      { type: 'lifesteal', value: 8, isPercent: true },
+    ],
+  },
+  // Defensivos
+  {
+    id: 'immortal_aegis',
+    name: 'Égide Imortal',
+    description: 'Um escudo que já protegeu deuses caídos.',
+    color: '#3B82F6',
+    modifiers: [
+      { type: 'max_hp', value: 200, isPercent: false },
+      { type: 'defense_pct', value: 20, isPercent: true },
+      { type: 'hp_regen', value: 8, isPercent: false },
+    ],
+  },
+  {
+    id: 'phantom_reflexes',
+    name: 'Reflexos Fantasma',
+    description: 'Você se move como fumaça — impossível de acertar.',
+    color: '#60A5FA',
+    modifiers: [
+      { type: 'dodge_chance', value: 25, isPercent: true },
+      { type: 'attack_speed', value: 15, isPercent: true },
+    ],
+  },
+  {
+    id: 'thorns_of_agony',
+    name: 'Espinhos da Agonia',
+    description: 'Quem ousa te tocar paga com dor.',
+    color: '#A855F7',
+    modifiers: [
+      { type: 'thorns', value: 30, isPercent: false },
+      { type: 'defense', value: 20, isPercent: false },
+      { type: 'block_chance', value: 15, isPercent: true },
+    ],
+  },
+  {
+    id: 'undying_will',
+    name: 'Vontade Imorredoura',
+    description: 'Sua vontade de viver supera qualquer ferimento.',
+    color: '#16A34A',
+    modifiers: [
+      { type: 'max_hp_pct', value: 40, isPercent: true },
+      { type: 'hp_regen', value: 12, isPercent: false },
+      { type: 'lifesteal', value: 5, isPercent: true },
+    ],
+  },
+  {
+    id: 'fortress',
+    name: 'Fortaleza Ambulante',
+    description: 'Você É a muralha. Nada passa.',
+    color: '#6B7280',
+    modifiers: [
+      { type: 'block_chance', value: 30, isPercent: true },
+      { type: 'block_value', value: 50, isPercent: false },
+      { type: 'defense', value: 25, isPercent: false },
+    ],
+  },
+  // Utilitários / Híbridos
+  {
+    id: 'midas_touch',
+    name: 'Toque de Midas',
+    description: 'Tudo que toca vira ouro. Literalmente.',
+    color: '#FBBF24',
+    modifiers: [
+      { type: 'gold_find', value: 80, isPercent: true },
+      { type: 'item_find', value: 40, isPercent: true },
+    ],
+  },
+  {
+    id: 'lucky_charm',
+    name: 'Amuleto da Sorte Absurda',
+    description: 'A sorte favorece os ousados. E você é insano.',
+    color: '#EC4899',
+    modifiers: [
+      { type: 'item_find', value: 60, isPercent: true },
+      { type: 'crit_rate', value: 12, isPercent: true },
+      { type: 'gold_find', value: 30, isPercent: true },
+    ],
+  },
+  {
+    id: 'war_machine',
+    name: 'Máquina de Guerra',
+    description: 'Construído para destruição total. Sem piedade.',
+    color: '#EF4444',
+    modifiers: [
+      { type: 'attack_damage_pct', value: 25, isPercent: true },
+      { type: 'attack_speed', value: 25, isPercent: true },
+      { type: 'crit_rate', value: 10, isPercent: true },
+      { type: 'crit_damage', value: 40, isPercent: true },
+    ],
+  },
+  {
+    id: 'blood_pact',
+    name: 'Pacto de Sangue',
+    description: 'Poder absoluto cobra um preço — mas vale cada gota.',
+    color: '#B91C1C',
+    modifiers: [
+      { type: 'attack_damage_pct', value: 50, isPercent: true },
+      { type: 'lifesteal', value: 20, isPercent: true },
+      { type: 'crit_damage', value: 60, isPercent: true },
+    ],
+  },
+  {
+    id: 'celestial_blessing',
+    name: 'Bênção Celestial',
+    description: 'Os céus sorriem para você. Tudo fica mais fácil.',
+    color: '#06B6D4',
+    modifiers: [
+      { type: 'max_hp_pct', value: 25, isPercent: true },
+      { type: 'attack_damage_pct', value: 20, isPercent: true },
+      { type: 'xp_gain', value: 50, isPercent: true },
+      { type: 'gold_find', value: 30, isPercent: true },
+    ],
+  },
+];
+
+// Chance de efeito único por raridade (0 = nunca)
+export const UNIQUE_EFFECT_CHANCE: Record<Rarity, number> = {
+  common:    0,
+  uncommon:  0,
+  rare:      3,
+  epic:      10,
+  legendary: 25,
+  mythic:    40,
+  celestial: 60,
+};
+
 // ─── ITEM ────────────────────────────────────────────────────
 export interface Item {
   id: string;
@@ -177,6 +378,7 @@ export interface Item {
   level: number;
   baseStats: ItemModifier[];
   bonusStats: ItemModifier[];
+  uniqueEffect?: UniqueEffect;
   icon: string;
   imageUrl?: string;
   description: string;
@@ -375,7 +577,7 @@ export interface GameState {
   showMerchant: boolean;
   showInventory: boolean;
   showEquipment: boolean;
-  gamePhase: 'idle' | 'combat' | 'merchant' | 'levelup' | 'gameover';
+  gamePhase: 'idle' | 'combat' | 'merchant' | 'levelup';
   notifications: GameNotification[];
   settings: GameSettings;
 }
