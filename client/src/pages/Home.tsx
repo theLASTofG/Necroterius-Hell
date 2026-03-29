@@ -30,8 +30,10 @@ import StatsPanel from '../components/game/StatsPanel';
 import GameHUD from '../components/game/GameHUD';
 import MerchantPanel from '../components/game/MerchantPanel';
 import { AreaNavigationPanel } from '../components/game/AreaNavigationPanel';
-import { DropRatesPanel } from '../components/game/DropRatesPanel';
+import DropRatesPanel from '../components/game/DropRatesPanel';
+import { SettingsPanel } from '../components/game/SettingsPanel';
 import { useGame } from '../contexts/GameContext';
+import { Settings } from 'lucide-react';
 
 // ─── LAYOUT INTERNO (usa o contexto) ─────────────────────────
 
@@ -40,6 +42,7 @@ type MobileTab = 'arena' | 'equipment' | 'inventory' | 'stats';
 function GameLayout() {
   const { state } = useGame();
   const [mobileTab, setMobileTab] = useState<MobileTab>('arena');
+  const [showSettings, setShowSettings] = useState(false);
 
   const tabs: Array<{ id: MobileTab; label: string; icon: string }> = [
     { id: 'arena',     label: 'BATALHA',    icon: '⚔️' },
@@ -54,7 +57,16 @@ function GameLayout() {
       style={{ background: '#000000', fontFamily: "'DM Sans', sans-serif" }}
     >
       {/* ── HUD (barra de controles) ── */}
-      <GameHUD />
+      <div className="relative">
+        <GameHUD onOpenSettings={() => setShowSettings(true)} />
+      </div>
+
+      {/* ── Settings Panel Overlay ── */}
+      <AnimatePresence>
+        {showSettings && (
+          <SettingsPanel onClose={() => setShowSettings(false)} />
+        )}
+      </AnimatePresence>
 
       {/* ── Layout desktop ── */}
       <div className="hidden md:flex flex-1 overflow-hidden">

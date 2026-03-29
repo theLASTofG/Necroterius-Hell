@@ -13,6 +13,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../../contexts/GameContext';
 import { RARITY_COLORS } from '../../game/types';
+import { Settings as SettingsIcon } from 'lucide-react';
 
 // ─── NOTIFICAÇÃO DE DROP ──────────────────────────────────────
 
@@ -166,7 +167,11 @@ function IdleScreen() {
 
 // ─── BARRA DE CONTROLES ───────────────────────────────────────
 
-function ControlBar() {
+interface ControlBarProps {
+  onOpenSettings: () => void;
+}
+
+function ControlBar({ onOpenSettings }: ControlBarProps) {
   const { state, pauseCombat, resumeCombat, setSpeed } = useGame();
   const { combat, settings, gamePhase } = state;
   const isActive = gamePhase === 'combat';
@@ -244,6 +249,23 @@ function ControlBar() {
             {combat.isPaused ? '▶ CONTINUAR' : '⏸ PAUSAR'}
           </motion.button>
         )}
+
+        {/* Botão Configurações */}
+        <motion.button
+          className="p-1.5"
+          style={{
+            border: '1px solid #1F2937',
+            color: '#6B7280',
+            background: 'transparent',
+            cursor: 'pointer',
+            borderRadius: '4px',
+          }}
+          whileHover={{ borderColor: '#FBBF24', color: '#FBBF24', background: '#FBBF2410' }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onOpenSettings}
+        >
+          <SettingsIcon className="w-4 h-4" />
+        </motion.button>
       </div>
     </div>
   );
@@ -251,13 +273,17 @@ function ControlBar() {
 
 // ─── COMPONENTE PRINCIPAL ─────────────────────────────────────
 
-export default function GameHUD() {
+interface GameHUDProps {
+  onOpenSettings: () => void;
+}
+
+export default function GameHUD({ onOpenSettings }: GameHUDProps) {
   const { state } = useGame();
   const { gamePhase } = state;
 
   return (
     <>
-      <ControlBar />
+      <ControlBar onOpenSettings={onOpenSettings} />
       <DropNotification />
       <AnimatePresence>
         {/* Game Over removido para suportar progressão infinita AFK */}

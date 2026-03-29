@@ -154,11 +154,13 @@ export default function BattleArena() {
       }}
     >
       {/* ── Números flutuantes de dano ── */}
-      <AnimatePresence>
-        {floatingNumbers.map(fn => (
-          <FloatingDamageNumber key={fn.id} fn={fn} />
-        ))}
-      </AnimatePresence>
+      {!state.settings.cleanMode && (
+        <AnimatePresence>
+          {floatingNumbers.map(fn => (
+            <FloatingDamageNumber key={fn.id} fn={fn} />
+          ))}
+        </AnimatePresence>
+      )}
 
       {/* ── Área de batalha ── */}
       <div className="flex-1 w-full flex items-center justify-between px-8 py-4 relative">

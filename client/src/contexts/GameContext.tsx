@@ -97,6 +97,7 @@ function createInitialGameState(): GameState {
       autoEquipBetter: false,
       showDamageNumbers: true,
       showCombatLog: true,
+      cleanMode: false,
     },
   };
 }
@@ -124,6 +125,8 @@ type GameAction =
   | { type: 'GO_TO_WAVE'; payload: number }
   | { type: 'SET_AREA'; payload: string }
   | { type: 'TOGGLE_AUTO_EQUIP' }
+  | { type: 'TOGGLE_CLEAN_MODE' }
+  | { type: 'TOGGLE_COMBAT_LOG' }
   | { type: 'SELL_LOW_RARITY'; payload: Rarity };
 
 // ─── REDUCER ──────────────────────────────────────────────────
@@ -271,6 +274,20 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
+    case 'TOGGLE_CLEAN_MODE': {
+      return {
+        ...state,
+        settings: { ...state.settings, cleanMode: !state.settings.cleanMode },
+      };
+    }
+
+    case 'TOGGLE_COMBAT_LOG': {
+      return {
+        ...state,
+        settings: { ...state.settings, showCombatLog: !state.settings.showCombatLog },
+      };
+    }
+
     case 'SELL_LOW_RARITY': {
       const newState = deepCloneGameState(state);
       const threshold = RARITY_ORDER[action.payload];
@@ -316,6 +333,16 @@ interface GameContextValue {
   setSpeed: (speed: 1 | 2 | 4) => void;
   closeMerchant: () => void;
 }
+
+const RARITY_ORDER: Record<string, number> = {
+  common: 1,
+  uncommon: 2,
+  rare: 3,
+  epic: 4,
+  legendary: 5,
+  mythic: 6,
+  celestial: 7,
+};
 
 const GameContext = createContext<GameContextValue | null>(null);
 
