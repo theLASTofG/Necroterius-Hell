@@ -158,12 +158,14 @@ export default function BattleArena() {
         backgroundImage: getBackground(),
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        minHeight: '400px',
+        minHeight: '450px',
         height: '100%',
+        perspective: '1000px', // Adiciona perspectiva 3D ao container pai
       }}
     >
       {/* Overlay escuro para melhorar legibilidade */}
-      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+      
       {/* ── Números flutuantes de dano ── */}
       {!state.settings.cleanMode && (
         <AnimatePresence>
@@ -173,11 +175,27 @@ export default function BattleArena() {
         </AnimatePresence>
       )}
 
-      {/* ── Área de batalha ── */}
-      <div className="flex-1 w-full flex items-center justify-between px-8 py-4 relative">
+      {/* ── Área de batalha com perspectiva de caminho ── */}
+      <div 
+        className="flex-1 w-full flex items-center justify-between px-12 py-8 relative"
+        style={{
+          transform: 'rotateX(15deg)', // Inclina a área para dar profundidade
+          transformStyle: 'preserve-3d',
+        }}
+      >
+        {/* Solo da Arena (Caminho/Paralelepípedo) */}
+        <div 
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[90%] h-32 bg-black/60 blur-sm"
+          style={{
+            transform: 'rotateX(60deg) translateZ(-50px)',
+            borderRadius: '50%',
+            boxShadow: '0 0 40px 20px rgba(0,0,0,0.8)',
+            zIndex: 0
+          }}
+        />
 
         {/* ── Lado do jogador (esquerda) ── */}
-        <div className="flex flex-col items-center gap-3 w-40">
+        <div className="flex flex-col items-center gap-3 w-40 relative z-10" style={{ transform: 'translateZ(20px)' }}>
           {/* Status de sangramento */}
           {playerHasBleeding && (
             <motion.div
@@ -267,7 +285,7 @@ export default function BattleArena() {
         </div>
 
         {/* ── Lado do mob (direita) ── */}
-        <div className="flex flex-col items-center gap-3 w-40">
+        <div className="flex flex-col items-center gap-3 w-40 relative z-10" style={{ transform: 'translateZ(20px)' }}>
           {/* Status de sangramento no mob */}
           {mobHasBleeding && (
             <motion.div
