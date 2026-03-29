@@ -99,6 +99,23 @@ function ItemTooltip({ item, equippedItem }: ItemTooltipProps) {
         </div>
       )}
 
+      {/* Efeito Único */}
+      {item.uniqueEffect && (
+        <div className="mb-2 p-2" style={{ background: `${item.uniqueEffect.color}10`, border: `1px solid ${item.uniqueEffect.color}40` }}>
+          <div className="font-bold text-xs mb-1" style={{ color: item.uniqueEffect.color }}>
+            ★ {item.uniqueEffect.name}
+          </div>
+          <div className="text-xs italic mb-1" style={{ color: `${item.uniqueEffect.color}CC` }}>
+            {item.uniqueEffect.description}
+          </div>
+          {item.uniqueEffect.modifiers.map((mod, i) => (
+            <div key={i} style={{ color: item.uniqueEffect!.color, fontWeight: 'bold' }}>
+              {getModifierLabel(mod)}
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Separador */}
       <div className="w-full h-px mb-2" style={{ background: '#1F2937' }} />
 

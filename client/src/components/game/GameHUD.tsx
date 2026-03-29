@@ -5,7 +5,7 @@
  * Design: Void Signal — Brutal Minimalism Dark
  * Barra superior com: wave, controles de velocidade, pause/play
  * Notificações de drops e level up
- * Tela de game over e idle
+ * Tela idle
  * ============================================================
  */
 
@@ -260,7 +260,6 @@ export default function GameHUD() {
       <ControlBar />
       <DropNotification />
       <AnimatePresence>
-        {gamePhase === 'gameover' && <GameOverScreen key="gameover" />}
         {gamePhase === 'idle' && <IdleScreen key="idle" />}
       </AnimatePresence>
     </>

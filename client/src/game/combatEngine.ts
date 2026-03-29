@@ -11,7 +11,7 @@
  * 4. HP regen do jogador aplica a cada segundo
  * 5. Quando mob morre: gera drops, ouro, XP
  * 6. Quando todos os mobs da wave morrem: próxima wave
- * 7. Quando jogador morre: game over
+ * 7. Quando jogador morre: respawn automático (loop infinito)
  *
  * MECÂNICAS ESPECIAIS:
  * - Crítico: dano * (critDamage/100)
@@ -530,14 +530,30 @@ export function processCombatTick(
   }
 
   // ── Verificar morte do jogador ────────────────────────────
-  // Ao invés de game over, fazer retry automático
+  // Loop infinito: respawn automático ao morrer
   if (character.baseStats.currentHp <= 0) {
     playerDied = true;
-    character.baseStats.currentHp = 0;
-    combat.isRunning = false;
-    // Ao invés de gameover, vamos para o próximo mob (retry automático)
-    // O jogador perde o combo mas continua a progressão
-    state.gamePhase = 'idle';
+
+    // Respawn: curar completamente
+    const fullHp = computeCharacterStats(character).maxHp;
+    character.baseStats.currentHp = fullHp;
+
+    // Limpar sangramentos no jogador
+    combat.playerBleedEffects = [];
+
+    // Resetar o mob atual para HP cheio (penalidade: perder progresso no mob)
+    if (combat.currentMob) {
+      combat.currentMob.stats.currentHp = combat.currentMob.stats.maxHp;
+      combat.mobBleedEffects = [];
+    }
+
+    // Log de respawn
+    addToCombatLog(combat, [
+      createEvent('heal', fullHp, 'player', false, '⚡ RESPAWN — Você renasceu!'),
+    ]);
+
+    // Continuar combate (não parar)
+    // combat.isRunning permanece true
   }
 
   // Atualizar stats computados
