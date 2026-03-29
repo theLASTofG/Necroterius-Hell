@@ -251,37 +251,53 @@ export default function BattleArena() {
           </div>
         </div>
 
-        {/* ── Centro — VS e info de wave ── */}
-        <div className="flex flex-col items-center gap-2">
+        {/* ── Centro — VS e info de wave (Integrado ao Caminho) ── */}
+        <div className="flex flex-col items-center justify-center relative z-10" style={{ transform: 'translateZ(-20px) translateY(20px)' }}>
+          {/* VS Flutuante e Etéreo */}
           <motion.div
-            className="text-4xl font-bold"
+            className="text-5xl font-bold italic"
             style={{
               fontFamily: "'Bebas Neue', sans-serif",
-              color: '#1F2937',
-              letterSpacing: '0.1em',
+              color: 'rgba(255, 255, 255, 0.1)',
+              letterSpacing: '0.2em',
+              textShadow: '0 0 20px rgba(255,255,255,0.05)',
+              marginBottom: '-10px'
             }}
-            animate={{ opacity: [0.4, 0.8, 0.4] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            animate={{ 
+              opacity: [0.1, 0.3, 0.1],
+              scale: [1, 1.05, 1]
+            }}
+            transition={{ duration: 3, repeat: Infinity }}
           >
             VS
           </motion.div>
 
-          {/* Indicador de wave */}
+          {/* Marcador de Solo (Caminho/Paralelepípedo) */}
           <div
-            className="text-xs font-mono px-3 py-1 text-center"
+            className="flex flex-col items-center justify-center px-6 py-2"
             style={{
-              color: '#6B7280',
-              border: '1px solid #1F2937',
-              background: '#050505',
+              background: 'linear-gradient(180deg, rgba(31, 41, 55, 0) 0%, rgba(31, 41, 55, 0.4) 100%)',
+              borderBottom: '2px solid rgba(251, 191, 36, 0.3)',
+              transform: 'rotateX(45deg)',
+              minWidth: '180px'
             }}
           >
-            <div style={{ color: '#FBBF24', fontFamily: "'Bebas Neue', sans-serif", fontSize: '18px' }}>
+            <div style={{ 
+              color: '#FBBF24', 
+              fontFamily: "'Bebas Neue', sans-serif", 
+              fontSize: '24px',
+              textShadow: '0 0 10px rgba(251, 191, 36, 0.5)',
+              letterSpacing: '0.1em'
+            }}>
               WAVE {combat.wave}
             </div>
-            <div style={{ color: '#374151' }}>
-              {combat.mobsKilled}/{combat.mobsInWave} mobs
+            <div className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'rgba(156, 163, 175, 0.6)' }}>
+              {combat.mobsKilled} / {combat.mobsInWave} ELIMINADOS
             </div>
           </div>
+          
+          {/* Brilho no solo abaixo do marcador */}
+          <div className="absolute -bottom-4 w-32 h-4 bg-yellow-500/10 blur-xl rounded-full" />
         </div>
 
         {/* ── Lado do mob (direita) ── */}
