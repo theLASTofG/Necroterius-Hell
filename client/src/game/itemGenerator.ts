@@ -302,6 +302,8 @@ const BONUS_MODS_BY_RARITY: Record<Rarity, number> = {
   rare:      2,
   epic:      3,
   legendary: 5,
+  mythic:    7,
+  celestial: 9,
 };
 
 /**
@@ -376,7 +378,7 @@ export function generateItem(
   // Calcular preço baseado em raridade e nível
   const basePrice = 50 * waveLevel;
   const rarityPriceMultipliers: Record<Rarity, number> = {
-    common: 1, uncommon: 2.5, rare: 6, epic: 15, legendary: 50,
+    common: 1, uncommon: 2.5, rare: 6, epic: 15, legendary: 50, mythic: 150, celestial: 500,
   };
   const price = Math.floor(basePrice * rarityPriceMultipliers[finalRarity] * (0.8 + Math.random() * 0.4));
   const affix = generateRandomAffix(finalRarity);

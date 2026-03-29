@@ -530,11 +530,14 @@ export function processCombatTick(
   }
 
   // ── Verificar morte do jogador ────────────────────────────
+  // Ao invés de game over, fazer retry automático
   if (character.baseStats.currentHp <= 0) {
     playerDied = true;
     character.baseStats.currentHp = 0;
     combat.isRunning = false;
-    state.gamePhase = 'gameover';
+    // Ao invés de gameover, vamos para o próximo mob (retry automático)
+    // O jogador perde o combo mas continua a progressão
+    state.gamePhase = 'idle';
   }
 
   // Atualizar stats computados

@@ -24,7 +24,7 @@ import { getModifierLabel, calculateItemPower } from '../../game/stats';
 
 // Ordem de raridade para sort
 const RARITY_ORDER: Record<Rarity, number> = {
-  legendary: 5, epic: 4, rare: 3, uncommon: 2, common: 1,
+  celestial: 7, mythic: 6, legendary: 5, epic: 4, rare: 3, uncommon: 2, common: 1,
 };
 
 // ─── CARD DE ITEM ─────────────────────────────────────────────

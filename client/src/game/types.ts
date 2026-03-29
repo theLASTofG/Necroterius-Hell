@@ -14,7 +14,7 @@
 
 // ─── RARIDADE DE ITENS ───────────────────────────────────────
 // Cada raridade tem cor semântica estrita no sistema visual
-export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic' | 'celestial';
 
 export const RARITY_COLORS: Record<Rarity, string> = {
   common:    '#9CA3AF', // cinza
@@ -22,6 +22,8 @@ export const RARITY_COLORS: Record<Rarity, string> = {
   rare:      '#3B82F6', // azul
   epic:      '#A855F7', // roxo
   legendary: '#FBBF24', // âmbar dourado
+  mythic:    '#EC4899', // rosa/magenta
+  celestial: '#06B6D4', // ciano brilhante
 };
 
 export const RARITY_LABELS: Record<Rarity, string> = {
@@ -30,6 +32,8 @@ export const RARITY_LABELS: Record<Rarity, string> = {
   rare:      'Raro',
   epic:      'Épico',
   legendary: 'Lendário',
+  mythic:    'Mítico',
+  celestial: 'Celestial',
 };
 
 // Multiplicador de poder base por raridade
@@ -39,15 +43,19 @@ export const RARITY_POWER_MULT: Record<Rarity, number> = {
   rare:      2.0,
   epic:      3.2,
   legendary: 5.5,
+  mythic:    8.5,
+  celestial: 12.0,
 };
 
 // Chance de drop por raridade (soma = 100%)
 export const RARITY_DROP_CHANCE: Record<Rarity, number> = {
-  common:    55,
-  uncommon:  28,
-  rare:      12,
-  epic:      4,
-  legendary: 1,
+  common:    50,
+  uncommon:  25,
+  rare:      15,
+  epic:      6,
+  legendary: 3,
+  mythic:    0.8,
+  celestial: 0.2,
 };
 
 // ─── SLOTS DE EQUIPAMENTO ────────────────────────────────────
@@ -143,6 +151,8 @@ export const AFFIX_CHANCES: Record<Rarity, Record<ItemAffix, number>> = {
   rare:      { normal: 70, cursed: 10, blessed: 15, god_touch: 5 },
   epic:      { normal: 60, cursed: 10, blessed: 20, god_touch: 10 },
   legendary: { normal: 40, cursed: 10, blessed: 30, god_touch: 20 },
+  mythic:    { normal: 30, cursed: 10, blessed: 40, god_touch: 20 },
+  celestial: { normal: 20, cursed: 5, blessed: 35, god_touch: 40 },
 };
 
 export function generateRandomAffix(rarity: Rarity): ItemAffix {
