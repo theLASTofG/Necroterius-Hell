@@ -144,15 +144,26 @@ export default function BattleArena() {
   const mobHasBleeding = combat.mobBleedEffects.length > 0;
   const playerHasBleeding = combat.playerBleedEffects.length > 0;
 
+  // Selecionar background baseado na wave
+  const getBackground = () => {
+    if (combat.wave <= 5) return 'url(/background-hell-1.png)';
+    if (combat.wave <= 10) return 'url(/background-hell-2.png)';
+    return 'url(/background-hell-3.png)';
+  };
+
   return (
     <div
-      className="relative w-full flex flex-col items-center justify-between"
+      className="relative w-full flex flex-col items-center justify-between overflow-hidden"
       style={{
-        background: '#000000',
+        backgroundImage: getBackground(),
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         minHeight: '400px',
         height: '100%',
       }}
     >
+      {/* Overlay escuro para melhorar legibilidade */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
       {/* ── Números flutuantes de dano ── */}
       {!state.settings.cleanMode && (
         <AnimatePresence>
