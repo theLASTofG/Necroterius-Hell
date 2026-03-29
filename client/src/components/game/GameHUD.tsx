@@ -260,7 +260,7 @@ export default function GameHUD() {
       <ControlBar />
       <DropNotification />
       <AnimatePresence>
-        {gamePhase === 'gameover' && <GameOverScreen key="gameover" />}
+        {/* Game Over removido para suportar progressão infinita AFK */}
         {gamePhase === 'idle' && <IdleScreen key="idle" />}
       </AnimatePresence>
     </>

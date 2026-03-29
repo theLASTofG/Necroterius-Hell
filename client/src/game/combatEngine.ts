@@ -530,14 +530,23 @@ export function processCombatTick(
   }
 
   // ── Verificar morte do jogador ────────────────────────────
-  // Ao invés de game over, fazer retry automático
+  // Ao invés de game over, fazer retry automático (AFK infinito)
   if (character.baseStats.currentHp <= 0) {
     playerDied = true;
-    character.baseStats.currentHp = 0;
-    combat.isRunning = false;
-    // Ao invés de gameover, vamos para o próximo mob (retry automático)
-    // O jogador perde o combo mas continua a progressão
-    state.gamePhase = 'idle';
+    // Restaurar vida do jogador para o máximo
+    character.baseStats.currentHp = character.computedStats.maxHp;
+    
+    // Adicionar evento de morte/ressurreição ao log
+    addToCombatLog(combat, [createEvent('dodge', 0, 'player', false, 'RESSURREIÇÃO')]);
+    
+    // Reiniciar o mob atual (o jogador "morreu" mas volta imediatamente)
+    if (combat.currentMob) {
+      combat.currentMob.stats.currentHp = combat.currentMob.stats.maxHp;
+    }
+    
+    // Garantir que o combate continue rodando
+    combat.isRunning = true;
+    state.gamePhase = 'combat';
   }
 
   // Atualizar stats computados
