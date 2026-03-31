@@ -407,6 +407,7 @@ export interface GameSettings {
   autoEquipBetter: boolean;  // Equipar automaticamente itens melhores
   showDamageNumbers: boolean;
   showCombatLog: boolean;
+  cleanMode: boolean;      // Modo visual limpo (sem números flutuantes)
 }
 
 // ─── NÚMERO FLUTUANTE DE DANO ────────────────────────────────

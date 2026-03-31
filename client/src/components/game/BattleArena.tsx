@@ -144,11 +144,16 @@ export default function BattleArena() {
   const mobHasBleeding = combat.mobBleedEffects.length > 0;
   const playerHasBleeding = combat.playerBleedEffects.length > 0;
 
-  // Selecionar background baseado na wave
+  // Selecionar background baseado na área atual
   const getBackground = () => {
-    if (combat.wave <= 5) return 'url(/background-hell-1.png)';
-    if (combat.wave <= 10) return 'url(/background-hell-2.png)';
-    return 'url(/background-hell-3.png)';
+    switch (combat.currentAreaId) {
+      case 'area_1': return 'url(/background-hell-1.png)';
+      case 'area_2': return 'url(/background-hell-2.png)';
+      case 'area_3':
+      case 'area_4':
+      case 'area_5': return 'url(/background-hell-3.png)';
+      default: return 'url(/background-hell-1.png)';
+    }
   };
 
   return (

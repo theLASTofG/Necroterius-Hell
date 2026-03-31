@@ -545,10 +545,18 @@ export function processCombatTick(
         const nextWaveMobs = generateWaveMobs(nextWave);
         const newMaxWave = Math.max(combat.maxWaveReached, nextWave);
         
+        // Determinar a área baseada na wave
+        let nextAreaId = combat.currentAreaId;
+        if (nextWave <= 10) nextAreaId = 'area_1';
+        else if (nextWave <= 20) nextAreaId = 'area_2';
+        else if (nextWave <= 30) nextAreaId = 'area_3';
+        else if (nextWave <= 50) nextAreaId = 'area_4';
+        else nextAreaId = 'area_5';
+
         state.combat = {
           ...createInitialCombatState(nextWave, newMaxWave),
           isFarmMode: combat.isFarmMode,
-          currentAreaId: combat.currentAreaId,
+          currentAreaId: nextAreaId,
           currentMob: nextWaveMobs[0],
           mobsInWave: nextWaveMobs.length,
           isRunning: true,
